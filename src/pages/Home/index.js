@@ -1,21 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { MdAddShoppingCart } from 'react-icons/md';
 
 import { formatPrice } from '../../util/format';
 import { addToCartRequest } from '../../store/modules/cart/actions';
-import * as LoadingActions from '../../store/modules/loading/actions';
+import { loadingStatus } from '../../store/modules/loading/actions';
 import api from '../../services/api';
 
 import { ProductList } from './styles';
 
-function Home({ amount, addToCart }) {
+export default function Home() {
   const [products, setProducts] = useState([]);
+  const amount = useSelector(({ cart }) =>
+    cart.reduce((a, product) => {
+      a[product.id] = product.amount;
+
+      return a;
+    }, {})
+  );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(loadingStatus(true));
     async function loadProducts() {
       const response = await api.get('/products');
 
@@ -24,12 +32,13 @@ function Home({ amount, addToCart }) {
         priceFormatted: formatPrice(product.price),
       }));
       setProducts(data);
+      dispatch(loadingStatus(false));
     }
     loadProducts();
-  }, []);
+  }, [dispatch]);
 
   const handleAddProduct = id => {
-    addToCart(id);
+    dispatch(addToCartRequest(id));
   };
 
   return (
@@ -54,26 +63,3 @@ function Home({ amount, addToCart }) {
     </ProductList>
   );
 }
-
-Home.propTypes = {
-  addToCart: PropTypes.func.isRequired,
-  amount: PropTypes.objectOf(PropTypes.number).isRequired,
-  loadingActions: PropTypes.shape({
-    loadingStatus: PropTypes.func,
-  }).isRequired,
-};
-
-const mapStateToProps = state => ({
-  amount: state.cart.reduce((amount, product) => {
-    amount[product.id] = product.amount;
-
-    return amount;
-  }, {}),
-});
-
-const mapDispatchToProps = dispatch => ({
-  addToCart: bindActionCreators(addToCartRequest, dispatch),
-  loadingActions: bindActionCreators(LoadingActions, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);

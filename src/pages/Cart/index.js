@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   MdRemoveCircleOutline,
@@ -11,24 +9,38 @@ import {
   MdRemoveShoppingCart,
 } from 'react-icons/md';
 
-import * as CartActions from '../../store/modules/cart/actions';
+import {
+  removeFromCart,
+  updateAmountRequest,
+} from '../../store/modules/cart/actions';
 import { formatPrice } from '../../util/format';
 
 import { Container, ProductTable, Total, EmptyCart } from './styles';
 
-function Cart({
-  cart,
-  removeFromCart,
-  updateAmountRequest,
-  total,
-  cartAmount,
-}) {
+export default function Cart() {
+  const cartAmount = useSelector(({ cart }) => cart.length);
+  const cartState = useSelector(({ cart }) =>
+    cart.map(product => ({
+      ...product,
+      subTotal: formatPrice(product.price * product.amount),
+    }))
+  );
+  const total = useSelector(({ cart }) =>
+    formatPrice(
+      cart.reduce((t, product) => {
+        return t + product.price * product.amount;
+      }, 0)
+    )
+  );
+
+  const dispatch = useDispatch();
+
   function increment(product) {
-    updateAmountRequest(product.id, product.amount + 1);
+    dispatch(updateAmountRequest(product.id, product.amount + 1));
   }
 
   function decrement(product) {
-    updateAmountRequest(product.id, product.amount - 1);
+    dispatch(updateAmountRequest(product.id, product.amount - 1));
   }
 
   return (
@@ -46,7 +58,7 @@ function Cart({
               </tr>
             </thead>
             <tbody>
-              {cart.map(product => (
+              {cartState.map(product => (
                 <tr key={product.id}>
                   <td>
                     <img src={product.image} alt={product.title} />
@@ -72,7 +84,7 @@ function Cart({
                   <td>
                     <button
                       type="button"
-                      onClick={() => removeFromCart(product.id)}
+                      onClick={() => dispatch(removeFromCart(product.id))}
                     >
                       <MdDelete size={20} color="#27ae60" />
                     </button>
@@ -99,38 +111,3 @@ function Cart({
     </Container>
   );
 }
-
-Cart.propTypes = {
-  cart: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      title: PropTypes.string,
-      price: PropTypes.number,
-      image: PropTypes.string,
-      priceFormatted: PropTypes.string,
-      amount: PropTypes.number,
-    })
-  ).isRequired,
-  total: PropTypes.string.isRequired,
-  removeFromCart: PropTypes.func.isRequired,
-  updateAmountRequest: PropTypes.func.isRequired,
-  cartAmount: PropTypes.number.isRequired,
-};
-
-const mapStateToProps = state => ({
-  cart: state.cart.map(product => ({
-    ...product,
-    subTotal: formatPrice(product.price * product.amount),
-  })),
-  total: formatPrice(
-    state.cart.reduce((total, product) => {
-      return total + product.price * product.amount;
-    }, 0)
-  ),
-  cartAmount: state.cart.length,
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(CartActions, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
