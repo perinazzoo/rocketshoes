@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 import { MdShoppingCart } from 'react-icons/md';
 
@@ -9,7 +8,9 @@ import { Container, Cart } from './styles';
 
 import logo from '../../assets/images/logo.svg';
 
-function Header({ cartAmount }) {
+export default function Header() {
+  const cartAmount = useSelector(({ cart }) => cart.length);
+
   let item = '';
 
   switch (cartAmount) {
@@ -42,13 +43,3 @@ function Header({ cartAmount }) {
     </Container>
   );
 }
-
-Header.propTypes = {
-  cartAmount: PropTypes.number.isRequired,
-};
-
-const mapStateToProps = state => ({
-  cartAmount: state.cart.length,
-});
-
-export default connect(mapStateToProps)(Header);
