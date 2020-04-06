@@ -10,11 +10,13 @@ Este projeto utiliza o Gitmoji para padronização de commits, saiba o que cada 
 <img src="./.github/1.png" />
 <img src="./.github/2.png" />
 
-## :grey_question: Sobre o projeto
+## :thinking: Sobre o projeto
 
 Este é um e-commerce fictício criado durante o módulo 7 do bootcamp GoStack da Rocketseat. Algumas funcionalidades fazem parte do desafio referente a este módulo.
 
-## :computer: Tecnologias usadas
+Nele você pode listar produtos, adicionar produtos ao carrinho, listar o carrinho, alterar o carrinho, remover produtos do carrinho e verificar o total e subtotal.
+
+## :computer: Tecnologias utilizadas
 
 * <a target="_blank" href="https://pt-br.reactjs.org/">ReactJS</a>
 * <a target="_blank" href="https://redux.js.org/">Redux + Saga</a>
@@ -28,12 +30,13 @@ Este é um e-commerce fictício criado durante o módulo 7 do bootcamp GoStack d
 * <a target="_blank" href="https://github.com/eslint/eslint">ESLint</a>
 * <a target="_blank" href="https://github.com/typicode/json-server">Json server</a>
 
-## :hammer_and_wrench: Iniciando o projeto
+## :wrench: Iniciando o projeto
 
-1. Clone este repositório usando git clone https://github.com/perinazzoo/rocketshoes.git
+1. Clone este repositório usando: `git clone https://github.com/perinazzoo/rocketshoes.git`
 2. Vá para o diretório usando: `cd rocketshoes`;
 3. Rode o comando `yarn` para instalar todas as dependências;
 4. Rode o comando `yarn start` para iniciar o servidor;
+
 <hr/>
 <br/>
 <blockquote>Feito com :coffee: e :heart: por Gabriel Perinazzo</blockquote>
